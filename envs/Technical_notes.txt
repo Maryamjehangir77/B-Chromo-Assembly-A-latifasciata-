@@ -1,0 +1,25 @@
+# Technical Notes: Alat-B-Chromosome-Assembly Pipeline
+
+## 1. Environment Management
+* **Conda YAML:** The provided `genomics_env.yml` includes core tools. However, for **EDTA** and **BRAKER**, it is highly recommended to use Singularity/Docker containers due to complex Perl/Augustus dependencies.
+* **Python Compatibility:** Note that **Redundans** requires a Python 2.7 environment, while most other tools use Python 3.9+.
+
+## 2. Genome Assembly (Scripts 01)
+* **wtdbg2 vs Falcon:** wtdbg2 was selected for the final assembly due to superior continuity (see Table S3 in manuscript).
+* **Polishing:** Pilon should be run iteratively. The provided script performs one round, but 2-3 rounds often yield better results for indels.
+
+## 3. B-Chromosome Identification (Scripts 03)
+* **Coverage Thresholds:** The log2-normalized coverage ratio approach (Valente et al. 2014) typically flags B-scaffolds when the ratio is > 1.5-2.0.
+* **Validation:** BLAST identity threshold is strictly set to >95% to avoid false positives with autosomal paralogs.
+
+## 4. 3D Genome & TADs (Scripts 04)
+* **Resolution:** TADs are called at **20kb and 50kb** resolutions. Ensure the Hi-C matrix is corrected (KR normalization) before calling TADs.
+* **SV Analysis:** SyRI requires the 0B draft to be anchored to the 1B chromosome-scale reference using **RagTag** first.
+
+## 5. Expression & Comparative Genomics (Scripts 05/06)
+* **STAR Alignment:** Uses a custom genome index with `--genomeSAindexNbases 10` optimized for cichlid genome size.
+* **edgeR Filter:** Differential expression is filtered by |logFC| >= 1.5 and FDR <= 0.05.
+* **CAFE:** Gene family expansions are assessed with a p-value threshold of 0.05.
+
+## 6. Repository Organization
+* **Git-Ignore:** Always keep large files (*.bam, *.fastq, results/) out of the GitHub repository to avoid size limit issues.

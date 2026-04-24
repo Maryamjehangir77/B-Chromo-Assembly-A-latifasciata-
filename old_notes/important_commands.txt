@@ -1,0 +1,156 @@
+﻿    1.source ~/.config/bioconda/activate         homer inside here 
+    2. conda activate hicexplorer envs
+    3. conda activate hicpro envs
+4. conda activate deepvariant
+5.  conda activate neoloop
+6. conda activate py38_syri and first goto syr directory
+7. (py38_syri) kornsorn02@cab:~/softwares/HiNT/bin$ 
+
+source /storage/maryam/anaconda3/bin/activate
+HiCUP insde here 
+conda create -n HiNT python >= 3.5 pyparix >= 0.3.0, cooler >= 0.7.4, pairtools >= 0.2.2, numpy, scipy, pandas, sklearn, multiprocessing 
+
+Remove sequences in fasta: 
+sed 's/>//' B_ids.txt > B_ids_2.tx
+awk 'BEGIN{while((getline<"ids.txt")>0)l[">"$1]=1}/^>/{f=!l[$1]}f' seq.fa
+
+SYRI_analysis
+nohup minimap2 -ax asm5 –eqx syri_final_B+_no_scaffolds_only_chrs_plus_Bsuper.fa ./syri_final_0B_merge_unpalced.rc_edied_final.fa -o B+Q_vs_0BT.sam &
+samtools view -b B+Q_vs_0BT.sam -o B+Q_vs_0BT.bam
+nohup  ../../softwares/syri/syri/bin/syri -c ./out.bam -r ./syri_final_0B_merge_unpalced.rc_edied_final.fa -q syri_final_B+_no_scaffolds_only_chrs_plus_Bsuper.fa -k -F B --log DEBUG &
+plotsr --genomes ./genomes.txt --sr syri.out -o B+T_0BQ.png
+
+OR by delta file
+/storage/maryam/softwares/syri/syri/bin/syri -c out.filtered.coords -d out.filtered.delta -r ./syri_final_0B_merge_unpalced.fa -q syri_final_B+_no_scaffolds_only_chrs_plus_Bsuper.fa 
+nohup ../../softwares/syri/syri/bin/syri -c out.filtered1000.coords -d out.filtered1000.delta -r ./syri_final_0B_merge_unpalced.rc.fa -q syri_final_B+_no_scaffolds_only_chrs_plus_Bsuper.fa --dir ./syri_result/  --unic 2000 --tdgaplen 300000 --tdmaxolp 0.4 --log DEBUG &
+
+
+
+HIC DATA ANALYSIS
+HICUP
+hicup_digester --re1 ^GATC,DpnII --genome Asta-genome Asta_final.fa
+hicup_truncater --re1 ^GATC,DpnII 1.fq.gz  2fq.gz
+
+nohup bowtie2 -x ../../Asta_chr_final_assembly/Asta_chr_level_assembly_final -U ./0B-a-latifas_S3HiC_R2.trunc.fastq --local -p 10 -S ./0B-a-latifasciata_R2_001.sam &
+
+HiCexplorer
+bowtie2 -x /storage/maryam/Asta_chr_final_assembly/Asta_chr_level_assembly_final --threads 8 -U ./B+a-latifasciata_R1_001.trunc.fastq --reorder | samtools view
+-Shb - > B+_1.bam &
+
+nohup hicBuildMatrix --samFiles 0B_1.bam 0B_2.bam --outBam 0B-hic_ref.bam --QCfolder 0B-hic_10kb_QC --outFileName 0B-hic_10kb.h5 -rs rest_site_positions.bed -seq GATC --danglingSequence GATC --binSize 10000  --threads 8 --inputBufferSize 400000 &
+
+hicMergeMatrixBins --matrix 0B_hi_matrix_10k.h5 --numBins 100 --outFileName 0B_hi_matrix-merged.100bins.h5
+
+hicPlotMatrix --matrix B+_hi_matrix-merged.100bins.h5  --log1p --dpi 300 --clearMaskedBins --chromosomeOrder Chromosome_1 Chromosome_2 Chromosome_3 Chromosome_4 Chromosome_5 Chromosome_6 Chromosome_7 Chromosome_8 Chromosome_9 Chromosome_10 Chromosome_11 Chromosome_12 Chromosome_13 Chromosome_14 Chromosome_15 Chromosome_16 Chromosome_17 Chromosome_18 Chromosome_19 Chromosome_20 Chromosome_21 Chromosome_22 --colorMap jet --title "B+-Hi-C matrix" --outFileName B+_plot_1Mb_matrix.png
+
+hicMergeMatrixBins --matrix0B_hi_matrix_10k.h5 --numBins 2 --outFileName 0B-Merged.matrix_20kb.h5
+
+hicCorrectMatrix diagnostic_plot  --chromosomes Chromosome_1 Chromosome_2 Chromosome_3 Chromosome_4 Chromosome_5 Chromosome_6 Chromosome_7 Chromosome_8 Chromosome_9 Chromosome_10 Chromosome_11 Chromosome_12 Chromosome_13 Chromosome_14 Chromosome_15 Chromosome_16 Chromosome_17 Chromosome_18 Chromosome_19 Chromosome_20 Chromosome_21 Chromosome_22 --matrix 0B-Merged.matrix_20kb.h5 --plotName diagnostic_plot.png
+
+hicCorrectMatrix correct --chromosomes Chromosome_1 Chromosome_2 Chromosome_3 Chromosome_4 Chromosome_5 Chromosome_6 Chromosome_7 Chromosome_8 Chromosome_9 Chromosome_10 Chromosome_11 Chromosome_12 Chromosome_13 Chromosome_14 Chromosome_15 Chromosome_16 Chromosome_17 Chromosome_18 Chromosome_19 Chromosome_20 Chromosome_21 Chromosome_22 --matrix 0B-Merged.matrix_20kb.h5 --filterThreshold -2.5 2 --perchr --outFileName 0B_Merged.Corrected_20kb.h5
+
+hicPlotMatrix --log1p --dpi 300 --matrix 0B_Merged.Corrected_20kb.h5 --region Chromosome_2 --title "Corrected Hi-C matrix : 0B_chr2" --outFileName 0B_Merged_Corrected-20kb_plot-chr2.png
+
+COMPARE HIC DATA
+hicCompareMatrices -m 0B_Merged.Corrected_20kb.h5 B+_Merged.Corrected_20kb.h5 --operation log2ratio -o 0B_over_B+_log2_20k.h5
+hicPlotMatrix -m 0B_over_B+_log2_20k.h5 --clearMaskedBins --region Chromosome_2 --vMin -4 --vMax 4 -o m1bp_over_gst_log2_m50_matrix_plot.png
+
+hicDetectLoops -m 0B_Merged.Corrected_50kb.h5 -o 0B_loops.bedgraph --maxLoopDistance 2000000 --windowSize 10 --peakWidth 6 --pValuePreselection 0.05 --pValue 0.05
+
+hicPlotMatrix -m +B-Merged.matrix_50kb.h5 -o +B_plot.png --log1p --region Chromosome_2 --loops loops.bedgraph
+
+0B_all_loops in 50k resolution:174
+B+_all_loops in 50k resolution:117
+0B_all_loops in 20k resolution:399
+B+_all_loops in 20k resolution:52
+
+
+hicPCA -m ../50K_corrected_resolution_matrix/0B -o 0Bpca1.bw 0Bpca2.bw --format bigwig
+hicTransform -m ../50K_corrected_resolution_matrix/0B_Merged.Corrected_50kb.h5 --outFileName 0B_50k_pearson.h5 --method pearson
+hicPlotMatrix -m pearson_all.h5 --outFileName pca1.png --perChr --bigwig pca1.bw
+
+TADS CALLING
+hicFindTADs --matrix ../corrected_20k_matrix/B+_Merged.Corrected_20kb.h5 --minDepth 30000 --maxDepth 120000 --numberOfProcessors 8 --step 20000 --outPrefix B+_TADs_20kb-Bins  --minBoundaryDistance 80000 --correctForMultipleTesting fdr --threshold 0.05
+create track.ini file(This file in folder)
+hicPlotTADs --tracks track2.ini -o chr2_hic_track.png --region Chromosome_2:500000-9000000
+
+HIC 0B and B+ comarison TADs
+normalized the data
+
+
+hicPlotSVL -m ../50K_corrected_resolution_matrix/0B-Merged.matrix_50kb.h5 ../50K_corrected_resolution_matrix/+B-Merged.matrix_50kb.h5 --distance 2000000 --threads 4 --plotFileName 0B_B+_SVL_plot.png --outFileName pvalues.txt --outFileNameData rawData.txt
+
+hicAverageRegions -m +B-Merged.matrix_50kb.h5 ../TADs_50k_resolution/B+_50k_HiCmatrix_min150000_max300000_step50000_thres0.05_delta0.01_fdr_domains.bed --range 100000 100000 --outFileName primary_chr1
+
+
+
+
+
+
+ctrl a+d screen detach
+screen -r name
+screen -ls
+
+hicPlotDistVsCounts -m ./0B_Merged.Corrected_100kb.h5 ./B+_Merged.Corrected_100kb.h5 -o counts_vs_dist_100k_bins_merged.png --labels 'Cond 1 Sample 0B' 'Cond 2 Sample B+' --perchr --maxdepth 20000000 --plotsize 5 4.2
+
+hicPlotDistVsCounts -m ../corrected_20k_matrix/0B_Merged.Corrected_20kb.h5 ../corrected_20k_matrix/B+_Merged.Corrected_20kb.h5 ../50K_corrected_resolution_matrix/0B_Merged.Corrected_50kb.h5 ../50K_corrected_resolution_matrix/+B_Merged.Corrected_50kb.h5 ./0B_Merged.Corrected_100kb.h5 ./B+_Merged.Corrected_100kb.h5 -o all_chr_counts_vs_dist_all_bins_merged.png --labels 'Sample 0B_20k' 'Sample B+_20k' 'Sample 0B_50k' 'Sample B+_50k' 'Sample 0B_100k' 'Sample B+_100k' --maxdepth 20000000 --plotsize 5 4.2
+
+
+RESULTS The dependence of the contact probability on the genomic distance plot
+
+
+    • HiC contact frequncies were investigated between B+ and 0B genoes at 3 different resolution.
+    • Short range interatctions are higher in 0B genome as compared to B+
+    • Long range interaction higher in B+ genome as indicated by genomic distance
+    • The high range intearxtions are enriched in unplaced scaffolds indicative of B linked region.
+
+
+HiC Unplaced scaffold analysis for B chromsome sequences
+
+Convert contaimnation free file into genome size file
+ bioawk -c fastx '{print $name"\t"length($seq)}' ../../../Asta_chr_final_assembly/Asta_1B_assembly_contaimation_free.fa >chrom.sizes.no.cont.txt
+
+
+Insert insert column having zero value
+
+awk '{print $1, $2, $3==0}' chrom.sizes.no.cont.txt | head
+awk '{print $1, $3, $2}' 1.txt | sed -e 's/ /\t/g' > genome_size_0_value.txt 
+
+Extract only scaffolds regions from bam of B+ and B-
+
+nohup samtools view -L ./genome_size_0_value.txt -o B+_2_unplaced.bam ../../alignments/B+_2.bam &
+
+samtools view -q 20 infut.bam > output.bam
+
+
+samtools view B+_2_unplaced.bam | awk '{print $3}' | sort | uniq -c  > B+_2_inter_count.txt
+
+awk 'NR==FNR{a[$2]=$1;next} ($2) in a{print $0, a[$2]}' 0B_1_inter_count.txt B+_1_inter_count.txt 0B_2_inter_count.txt B+_2_inter_count.txt | head
+
+awk 'NR==FNR{a[$2]=$3;next} ($2) in a{print $0, a[$2]}' 0B_1B_R1.txt 0B_1B_R2.txt > test_v1.txt
+
+awk 'NR==FNR{a[$2]=$1;next} ($2) in a{print $0, a[$2]}' 0B_1B_R1.txt 0B_1B_R2.txt > test_v2.txt
+
+paste test_v1.txt test_v2.txt > test_v3.txt
+
+awk '{print $1, $5, $4, $2, $3}' test_v3.txt | sed -e 's/ /\t/g' > 0B_1B_unplaced_final_merged_R1_R2.text
+
+awk '$5 > 3 && $6 > 3' 0B_1B_unplaced_final_merged_R1_R2.test2.text | awk '$2 > 5 && $4 > 5' | sed -e 's/ /\t/g' > B-linked_ratio_3x_min5inter.txt
+
+awk 'BEGIN{OFS="\t"} NR==1{print;next}{if ($8==0) {print $0, "inf"} else {print $0, log($3/$2)/log(2)}}' ratio_final.txt | head
+
+
+MUNTAJ_HIC
+source conda miniconda/bin/activate
+conda activate hicexplorer
+hicFindRestSite --fasta GCA_008782695.1_UCB_Mmun_1.0_genomic.fna --searchPattern GATC -o Mmun_rest_site_positions.bed
+
+ nohup hicBuildMatrix --samFiles SRR9037356_M_reevesi_CR_MMU_R1.bam SRR9037356_M_reevesi_CR_MMU_R2.bam --outBam SRR9037356_M_reevesi_CR_MMU_merged_R1R2.bam --QCfolder SRR9037356_M_reevesi_CR_MMU --outFileName SRR9037356_M_reevesi_CR_MMU_hic_10kb.h5 -rs ..//../Mmun_rest_site_positions.bed -seq GATC --danglingSequence GATC --binSize 10000  --threads 8 --inputBufferSize 400000 &
+
+nohup hicBuildMatrix --samFiles Muntjac-muntjac_merged_R1.bam Muntjac-muntjac_merged_R2.bam --outBam Muntjac-muntjac_merged_merged_R1R2.bam --QCfolder Muntjac-muntjac --outFileName Muntjac-muntjac_hic_10kb.h5 -rs ..//../Mmun_rest_site_positions.bed -seq GATC --danglingSequence GATC --binSize 10000  --threads 8 --inputBufferSize 400000 &
+
+nohup hicBuildMatrix --samFiles Muntiacus-crinifrons_merged_R1.bam Muntiacus-crinifrons_merged_R2.bam --outBam Muntiacus-crinifrons_merged_R1R2.bam --QCfolder Muntiacus-crinifrons --outFileName Muntiacus-crinifrons_hic_10kb.h5 -rs ..//../Mmun_rest_site_positions.bed -seq GATC --danglingSequence GATC --binSize 10000  --threads 8 --inputBufferSize 400000 &
+
+
+
+

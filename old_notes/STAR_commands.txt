@@ -1,0 +1,48 @@
+nohup /storage/maryam/softwares/STAR-2.7.3a/bin/Linux_x86_64_static/STAR --runThreadN 24 --runMode genomeGenerate --genomeDir ./ --genomeFastaFiles ./CpG-genes.fa --genomeSAindexNbases 10 &
+
+/storage/maryam/softwares/STAR-2.7.3a/bin/Linux_x86_64_static/STAR   --runMode alignReads   --runThreadN 12   --genomeDir ./   --readFilesIn /guest-storage/Data/Transcriptomes/raw_data_Br/AL44BrTr_1.fq,/guest-storage/Data/Transcriptomes/raw_data_Br/AL55BrTr_1.fq,/guest-storage/Data/Transcriptomes/raw_data_Br/AL57BrTr_1.fq,/guest-storage/Data/Transcriptomes/raw_data_Br/AL44BrTr_2.fq,/guest-storage/Data/Transcriptomes/raw_data_Br/AL55BrTr_2.fq,/guest-storage/Data/Transcriptomes/raw_data_Br/AL57BrTr_2.fq --outFileNamePrefix 0B-Brain-Female   --outSAMtype BAM SortedByCoordinate &
+
+/storage/maryam/softwares/STAR-2.7.3a/bin/Linux_x86_64_static/STAR   --runMode alignReads   --runThreadN 12  --genomeDir ./   --readFilesIn /guest-storage/Data/Transcriptomes/raw_data_Br/AL33BrTr_1.fq,/guest-storage/Data/Transcriptomes/raw_data_Br/AL54BrTr_1.fq,/guest-storage/Data/Transcriptomes/raw_data_Br/AL56BrTr_1.fq,/guest-storage/Data/Transcriptomes/raw_data_Br/AL33BrTr_2.fq,/guest-storage/Data/Transcriptomes/raw_data_Br/AL54BrTr_2.fq,/guest-storage/Data/Transcriptomes/raw_data_Br/AL56BrTr_2.fq --outFileNamePrefix 0B-Brain-male  --outSAMtype BAM   SortedByCoordinate 
+
+/storage/maryam/softwares/STAR-2.7.3a/bin/Linux_x86_64_static/STAR   --runMode alignReads  --runThreadN 12   --genomeDir ./   --readFilesIn /guest-storage/Data/Transcriptomes/raw_data_Br/AL23BrTr_1.fq,/guest-storage/Data/Transcriptomes/raw_data_Br/AL40BrTr_1.fq,/guest-storage/Data/Transcriptomes/raw_data_Br/AL48BrTr_1.fq,/guest-storage/Data/Transcriptomes/raw_data_Br/AL23BrTr_2.fq,/guest-storage/Data/Transcriptomes/raw_data_Br/AL40BrTr_2.fq,/guest-storage/Data/Transcriptomes/raw_data_Br/AL48BrTr_2.fq      --outFileNamePrefix ./B+_brain_female/B-Brain-Female   --outSAMtype BAM   SortedByCoordinate  
+
+nohup /storage/maryam/softwares/STAR-2.7.3a/bin/Linux_x86_64_static/STAR   --runMode alignReads   --runThreadN 12   --genomeDir ./   --readFilesIn /guest-storage/Data/Transcriptomes/raw_data_Br/AL38BrTr_1.fq,/guest-storage/Data/Transcriptomes/raw_data_Br/AL43BrTr_1.fq,/guest-storage/Data/Transcriptomes/raw_data_Br/AL47BrTr_1.fq,/guest-storage/Data/Transcriptomes/raw_data_Br/AL38BrTr_2.fq,/guest-storage/Data/Transcriptomes/raw_data_Br/AL43BrTr_2.fq,/guest-storage/Data/Transcriptomes/raw_data_Br/AL47BrTr_2.fq --outFileNamePrefix ./B+_brain_male/B-Brain-male   --outSAMtype BAM   SortedByCoordinate &
+
+/storage/maryam/softwares/STAR-2.7.3a/bin/Linux_x86_64_static/STAR   --runMode alignReads --runThreadN 12  --genomeDir ./   --readFilesIn /guest-storage/Data/Transcriptomes/raw_data_Mu+Go_tr/AL09GoTr_1.fq,/guest-storage/Data/Transcriptomes/raw_data_Mu+Go_tr/AL11GoTr_1.fq,/guest-storage/Data/Transcriptomes/raw_data_Mu+Go_tr/AL13GoTr_1.fq,/guest-storage/Data/Transcriptomes/raw_data_Mu+Go_tr/AL09GoTr_2.fq,/guest-storage/Data/Transcriptomes/raw_data_Mu+Go_tr/AL11GoTr_2.fq,/guest-storage/Data/Transcriptomes/raw_data_Mu+Go_tr/AL13GoTr_2.fq  --outFileNamePrefix ./0B_gonad_female 0Bgonads-Female   --outSAMtype BAM   SortedByCoordinate &
+
+nohup /storage/maryam/softwares/STAR-2.7.3a/bin/Linux_x86_64_static/STAR   --runMode alignReads  --runThreadN 12 --genomeDir ./   --readFilesIn /guest-storage/Data/Transcriptomes/raw_data_Mu+Go_tr/AL12GoTr_1.fq,/guest-storage/Data/Transcriptomes/raw_data_Mu+Go_tr/AL15GoTr_1.fq,/guest-storage/Data/Transcriptomes/raw_data_Mu+Go_tr/AL16GoTr_1.fq,/guest-storage/Data/Transcriptomes/raw_data_Mu+Go_tr/AL12GoTr_2.fq,/guest-storage/Data/Transcriptomes/raw_data_Mu+Go_tr/AL15GoTr_2.fq,/guest-storage/Data/Transcriptomes/raw_data_Mu+Go_tr/AL16GoTr_2.fq      --outFileNamePrefix ./0B_gonad_male/0Bgonads-male   --outSAMtype BAM   SortedByCoordinate &
+
+
+/storage/maryam/softwares/STAR-2.7.3a/bin/Linux_x86_64_static/STAR   --runMode alignReads  --runThreadN 12 --genomeDir ./   --readFilesIn /guest-storage/Data/Transcriptomes/raw_data_Mu+Go_tr/AL05GoTr_1.fq,/guest-storage/Data/Transcriptomes/raw_data_Mu+Go_tr/AL06GoTr_1.fq,/guest-storage/Data/Transcriptomes/raw_data_Mu+Go_tr/AL20GoTr_1.fq,/guest-storage/Data/Transcriptomes/raw_data_Mu+Go_tr/AL05GoTr_2.fq,/guest-storage/Data/Transcriptomes/raw_data_Mu+Go_tr/AL06GoTr_2.fq,/guest-storage/Data/Transcriptomes/raw_data_Mu+Go_tr/AL20GoTr_2.fq  --outFileNamePrefix B+gonads-Female   --outSAMtype BAM   SortedByCoordinate &
+
+/storage/maryam/softwares/STAR-2.7.3a/bin/Linux_x86_64_static/STAR   --runMode alignReads --runThreadN 12  --genomeDir ./   --readFilesIn /guest-storage/Data/Transcriptomes/raw_data_Mu+Go_tr/AL01GoTr_1.fq,/guest-storage/Data/Transcriptomes/raw_data_Mu+Go_tr/AL02GoTr_1.fq,/guest-storage/Data/Transcriptomes/raw_data_Mu+Go_tr/AL04GoTr_1.fq,/guest-storage/Data/Transcriptomes/raw_data_Mu+Go_tr/AL01GoTr_2.fq,/guest-storage/Data/Transcriptomes/raw_data_Mu+Go_tr/AL02GoTr_2.fq,/guest-storage/Data/Transcriptomes/raw_data_Mu+Go_tr/AL04GoTr_2.fq      --outFileNamePrefix B+gonads-Male   --outSAMtype BAM   SortedByCoordinate &
+
+/storage/maryam/softwares/STAR-2.7.3a/bin/Linux_x86_64_static/STAR   --runMode alignReads   --runThreadN 12   --genomeDir ./   --readFilesIn /guest-storage/Data/Transcriptomes/raw_data_Mu+Go_tr/AL11MuTr_1.fq,/guest-storage/Data/Transcriptomes/raw_data_Mu+Go_tr/AL13MuTr_1.fq,/guest-storage/Data/Transcriptomes/raw_data_Mu+Go_tr/AL14MuTr_1.fq,/guest-storage/Data/Transcriptomes/raw_data_Mu+Go_tr/AL11MuTr_2.fq,/guest-storage/Data/Transcriptomes/raw_data_Mu+Go_tr/AL13MuTr_2.fq,/guest-storage/Data/Transcriptomes/raw_data_Mu+Go_tr/AL14MuTr_2.fq   --outFileNamePrefix 0Bmuscle-Female   --outSAMtype BAM   SortedByCoordinate
+
+
+nohup /storage/maryam/softwares/STAR-2.7.3a/bin/Linux_x86_64_static/STAR   --runMode alignReads   --runThreadN 12   --genomeDir ./   --readFilesIn /guest-storage/Data/Transcriptomes/raw_data_Mu+Go_tr/AL11MuTr_1.fq,/guest-storage/Data/Transcriptomes/raw_data_Mu+Go_tr/AL13MuTr_1.fq,/guest-storage/Data/Transcriptomes/raw_data_Mu+Go_tr/AL14MuTr_1.fq,/guest-storage/Data/Transcriptomes/raw_data_Mu+Go_tr/AL11MuTr_2.fq,/guest-storage/Data/Transcriptomes/raw_data_Mu+Go_tr/AL13MuTr_2.fq,/guest-storage/Data/Transcriptomes/raw_data_Mu+Go_tr/AL14MuTr_2.fq      --outFileNamePrefix 0Bmuscle-Female   --outSAMtype BAM   SortedByCoordinate
+
+
+nohup /storage/maryam/softwares/STAR-2.7.3a/bin/Linux_x86_64_static/STAR   --runMode alignReads   --runThreadN 12   --genomeDir ./   --readFilesIn /guest-storage/Data/Transcriptomes/raw_data_Mu+Go_tr/AL12MuTr_1.fq,/guest-storage/Data/Transcriptomes/raw_data_Mu+Go_tr/AL16MuTr_1.fq,/guest-storage/Data/Transcriptomes/raw_data_Mu+Go_tr/AL30MuTr_1.fq,/guest-storage/Data/Transcriptomes/raw_data_Mu+Go_tr/AL12MuTr_2.fq,/guest-storage/Data/Transcriptomes/raw_data_Mu+Go_tr/AL16MuTr_2.fq,/guest-storage/Data/Transcriptomes/raw_data_Mu+Go_tr/AL30MuTr_2.fq      --outFileNamePrefix 0Bmuscle-male   --outSAMtype BAM   SortedByCoordinate &
+
+
+
+nohup /storage/maryam/softwares/STAR-2.7.3a/bin/Linux_x86_64_static/STAR   --runMode alignReads   --runThreadN 12   --genomeDir ./   --readFilesIn /guest-storage/Data/Transcriptomes/raw_data_Mu+Go_tr/AL06MuTr_1.fq,/guest-storage/Data/Transcriptomes/raw_data_Mu+Go_tr/AL08MuTr_1.fq,/guest-storage/Data/Transcriptomes/raw_data_Mu+Go_tr/AL18MuTr_1.fq,/guest-storage/Data/Transcriptomes/raw_data_Mu+Go_tr/AL06MuTr_2.fq,/guest-storage/Data/Transcriptomes/raw_data_Mu+Go_tr/AL08MuTr_2.fq,/guest-storage/Data/Transcriptomes/raw_data_Mu+Go_tr/AL18MuTr_2.fq      --outFileNamePrefix B+muscle-Female   --outSAMtype BAM   SortedByCoordinate &
+
+
+nohup /storage/maryam/softwares/STAR-2.7.3a/bin/Linux_x86_64_static/STAR   --runMode alignReads   --runThreadN 12   --genomeDir ./   --readFilesIn /guest-storage/Data/Transcriptomes/raw_data_Mu+Go_tr/AL23MuTr_1.fq,/guest-storage/Data/Transcriptomes/raw_data_Mu+Go_tr/AL04MuTr_1.fq,/guest-storage/Data/Transcriptomes/raw_data_Mu+Go_tr/AL43MuTr_1.fq,/guest-storage/Data/Transcriptomes/raw_data_Mu+Go_tr/AL23MuTr_2.fq,/guest-storage/Data/Transcriptomes/raw_data_Mu+Go_tr/AL04MuTr_2.fq,/guest-storage/Data/Transcriptomes/raw_data_Mu+Go_tr/AL43MuTr_2.fq      --outFileNamePrefix B+muscle-male   --outSAMtype BAM   SortedByCoordinate  &
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

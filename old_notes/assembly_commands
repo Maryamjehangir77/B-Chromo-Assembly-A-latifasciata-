@@ -1,0 +1,120 @@
+Astatolilafia Latifasciata genome assembly steps:
+
+1. canu command
+nohup /storage/maryam/softwares/canu-2.1/bin/canu -p Asta-latifasciata -d canu-01-assembly genomeSize=1g -pacbio-raw /storage/maryam/00-raw-data_pacbio/ala-1b-Ge-Mus-M_PacBio.fastq correctedErrorRate=0.035 utgOvlErrorRate=0.065 trimReadsCoverage=2 trimReadsOverlap=500 > std.error 2> std.out &
+
+Wtgdb2 Assembly 
+./wtdbg2 -x rs(pacbio_RSII) -g 1g -t 32 -i reads.fa.gz -fo prefix (require 200gb memeory)
+./wtpoa-cns -t 32 -i prefix.ctg.lay.gz -fo prefix.ctg.fa
+
+2. Evaluation by quast and busco collective tool gvolante(online tool)
+https://gvolante.riken.jp/
+
+3. Haplotype genome remove from assembly by redundans
+nohup python2 /home/kornsorn02/softwares/redundans/redundans.py -v -i ../Asta_illumina_1B-male_data/filtered_paired/*paired.fq -l ../Asta_1b_male_muscle_pacbio.fasta -f ./Ala_falcon_assemly_v1.fasta -o redundans_corrected_assembly.fa &
+
+4. correction by short reads Pilon
+bwa index genome.fasta
+bwa mem -t 8 ./Asta_pilon_v1.fasta ./output_forward_paired.fq.gz output_reverse_paired.fq.gz -o pilon_v2_aln.sam
+samtools
+samtools view -bS pilon_aln.sam | samtools sort -o pilon_sorted.bam &
+samtools index pilon_sorted.bam 
+nohup java -Xmx300g -jar /home/kornsorn02/softwares/pilon-1.23.jar --genome /home/kornsorn02/maryam_pacbio/Asta_01_asembly/Asta_canu_scaffolds_reduced.fa --frags ./pilon_sorted.bam --output Asta_pilon --fix all --mindepth 0.5 --changes --verbose --threads 16 &
+
+5. Hi-C reads alignment with pacbio assembly and make a hybrid assembly
+I. SALSA tool
+Alignment file
+bwa mem -SP5 -t 8 Asta_scaffolds_reduced.fa R1.fastq R2.fastq  -o output.sam
+sam to bam
+bedtools bam2Bed -i alignment.bam > alignment.bed
+sort -k 4 alignment.bed > tmp && mv tmp alignment.bed
+Generating contig size
+samtools faidx contigs.fasta
+python run_pipeline.py -a contigs.fasta -l contigs.fasta.fai -b alignment.bed -e GATC(phase genomics restriction enzymes sequence) -o scaffolds
+
+ii. JUICER Alignment of Hi-c reads with pacbioassembly and assembly 3D DNA tool
+Folder structure
+ You are going to a folder with four subfolders containing: HiC reads, bwa index of your genome, predicted restriction enzyme cuts for your genome (if needed), and your fastq files split into appropriate sizes.
+
+├── 01_JuicerSetup
+│   ├── chrom.sizes
+│   ├── fastq
+│   │   ├── hic_R1.fastq
+│   │   └── hic_R2.fastq
+│   ├── references
+│   │   ├── Asta_GenomePilon3.PILON.fasta
+│   │   ├── Asta_GenomePilon3.PILON.fasta.amb
+│   │   ├── Asta_GenomePilon3.PILON.fasta.ann
+│   │   ├── Asta_GenomePilon3.PILON.fasta.bwt
+│   │   ├── Asta_GenomePilon3.PILON.fasta.pac
+│   │   └── Asta_GenomePilon3.PILON.fasta.sa
+│   ├── restriction_sites
+│   |   └── sta_GenomePilon3.PILON.fasta_DpnII.txt
+|   └── splits/
+|   |   ├── x000_R1.fastq
+|   |   ├── x000_R2.fastq
+|   |   ├── x001_R1.fastq
+|   |   ├── x001_R2.fastq
+|   |   ├── x002_R1.fastq
+|   |   ├── x002_R2.fastq
+|   |   ├── x003_R1.fastq
+|   |   ├── x003_R2.fastq
+|   |   ├── x004_R1.fastq
+|   |   ├── x004_R2.fastq
+|   |   ├── x005_R1.fastq
+|   |   ├── x005_R2.fastq
+|   |   ├── x006_R1.fastq
+|   |   ├── x006_R2.fastq
+|   |   ├── x007_R1.fastq
+|   |   ├── x007_R2.fastq
+|   |   ├── x008_R1.fastq
+|   |   ├── x008_R2.fastq
+|   |   ├── x009_R1.fastq
+
+softlink and index the genome sequence in the references/ folder
+1
+2
+3
+4
+5
+#index the references in this explicitly named folder.
+mkdir references; cd references
+ln -s Asta_GenomePilon3.PILON.fasta
+bwa index Asta_GenomePilon3.PILON.fasta
+Create restriction enzyme proposed cutting sites
+Phase genomics used Sau3AI
+1
+2
+3
+mkdir restriction_sites; cd restriction_sites
+python ../../juicer/misc/generate_site_positions.py Sau3AI Asta_GenomePilon3.PILON.fasta 
+ ../references/Asta_GenomePilon3.PILON.fasta
+cd ../
+Get your HiC reads ready
+While juicer does support splitting gzipped files, we had problems getting juicer to split the reads. Thus I worked around this to make juicer assume the fastq files are already split.
+    • fastq files should look like filename_R1.fastq and filename_R2.fastq 
+
+mkdir fastq;cd fastq
+ln -s /work/JustJammin/White_S1_L001_R1_001.fastq hic_R1.fastq
+ln -s /work/JustJammin/White_S1_L001_R2_001.fastq hic_R2.fastq
+cd ../
+mkdir splits
+cd splits/
+split -a 3 -l 90000000 -d --additional-suffix=_R2.fastq ../fastq/hic_R2.fastq &
+split -a 3 -l 90000000 -d --additional-suffix=_R1.fastq ../fastq/hic_R1.fastq &
+cd ../
+Create a chromosome sizes file in the format “name\tsequence_length”
+
+
+bioawk -c fastx '{print $name"\t"length($seq)}' references/Asta_GenomePilon3.PILON.fasta >chrom.sizes
+
+Submit a juicer run
+Move to the submission directory and submit The trick here is setting juicer’s short, medium, and long queue times, as they will not likely be default for your system
+
+cd ../
+#01_JuicerSetup
+ nohup ./juicer.sh -d 01_JuicerSetup/ -p 01_JuicerSetup/chrom.sizes 
+-y 01_JuicerSetup/restriction_sites/Asta_scaffolds_reduced.fa_Sau3AI.txt 
+-z 01_JuicerSetup/references/Asta_scaffolds_reduced.fa -t 8 
+-D /storage/maryam/softwares/opt/juicer/&
+
