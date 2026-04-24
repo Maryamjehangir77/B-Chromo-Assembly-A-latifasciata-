@@ -60,6 +60,15 @@ Bash
 conda env create -f envs/genomics_env.yml
 conda activate genomics_env
 
+
+Data Availability
+
+The genomic data and chromosome-level assembly generated for this study are deposited at the **National Center for Biotechnology Information (NCBI)** under the following accessions:
+
+* **BioProject:** [`PRJNA1283115`](https://www.ncbi.nlm.nih.gov/bioproject/PRJNA1283115)
+* **Genome Assembly:** [`GCA_051989935.1`](https://www.ncbi.nlm.nih.gov/datasets/genome/GCA_051989935.1/)
+* **Sequence Read Archive (SRA):** Raw reads for PacBio HiFi, Illumina, and Hi-C can be accessed via the BioProject link above.
+
  Citation
 
 If you use these scripts or the assembly in your research, please cite:
