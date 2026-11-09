@@ -1,83 +1,29 @@
-# A. latifasciata B-Chromosome Genome Assembly 
+# *Astatotilapia latifasciata* B-chromosome genome assembly
 
-[![bioRxiv](https://img.shields.io/badge/bioRxiv-10.1101/2025.08.05.668687-red)](https://doi.org/10.1101/2025.08.05.668687)
+This repository contains selected scripts, environment files, and notes associated with the chromosome-level genome assembly and B-chromosome analyses reported in the paper below.
 
-This repository contains the bioinformatics pipelines, custom scripts, and configuration files for the chromosome-level assembly, annotation, and 3D chromatin analysis of the *Astatotilapia latifasciata* B chromosome.
+## Publication
 
----
+Jehangir, M., Ahmad, S.F., Oliveira, J.I.N. et al. “Genome assembly of *Astatotilapia latifasciata* uncovers B chromosome-linked chromatin reorganization.” *Heredity* (2026). [https://doi.org/10.1038/s41437-026-00847-4](https://doi.org/10.1038/s41437-026-00847-4)
 
-##  Repository Structure
+Please use the final journal article as the preferred citation; the earlier bioRxiv preprint is superseded.
 
-```text
-.
-├── envs/                # Conda environment definitions (.yml)
-├── metadata/            # B-markers, chrom.sizes, and sample sheets
-├── results/             # Final alignment and assembly outputs (Git-ignored)
-└── scripts/
-    ├── 01_assembly/                      # wtdbg2, redundans, and Pilon polishing
-    ├── 02_annotation/                    # EDTA (TEs) and BRAKER (Protein-coding)
-    ├── 03_B-Chromosome_Identification/   # Coverage ratios and Hi-C validation
-    ├── 04_3d_genome/                     # HiCExplorer (TADs/Loops) and SyRI (SVs)
-    ├── 05_expression/                    # STAR alignment and edgeR (DE analysis)
-    └── 06_comparative/                   # OrthoFinder2, IQ-TREE, and CAFE
+## Repository contents
 
- Analysis Workflow
-1. Genome Assembly & Polishing
+`envs/` contains a Conda environment specification. `scripts/` contains selected analysis scripts. `old_notes/` contains technical notes.
 
-The genome was assembled using wtdbg2 (v2.5) and polished with Pilon (v1.22). Redundant sequences were removed using Redundans.
+The repository does not include the `metadata/` directory shown in an earlier README version. Raw data, sample sheets, and analysis results are also not tracked here.
 
-    Scripts: scripts/01_assembly/
+## Data availability
 
-2. Genome Annotation
+- Raw sequencing reads: [NCBI BioProject PRJNA1283115](https://www.ncbi.nlm.nih.gov/bioproject/PRJNA1283115)
+- Genome assembly: [GCA_051989935.1](https://www.ncbi.nlm.nih.gov/datasets/genome/GCA_051989935.1/)
+- Repeat annotations, gene annotations, and supporting datasets: [Zenodo, 10.5281/zenodo.15522222](https://doi.org/10.5281/zenodo.15522222)
 
-Repeat annotation was performed using the Extensive de-novo TE Annotator (EDTA). Protein-coding genes were predicted using BRAKER, incorporating transcriptomic evidence.
+## Using the scripts
 
-    Scripts: scripts/02_annotation/
+These are project-specific research scripts, not a ready-to-run, end-to-end pipeline. Paths, sample names, metadata, and reference files may need to be supplied or adjusted. The Conda file is a starting environment; the paper reports Pilon v1.22, while the current environment file pins v1.24 and the assembly script refers to a local v1.22 JAR. Resolve this version difference before reproducing the assembly.
 
-3. B-Chromosome Identification
+The Hi-C matrix script is also a template that needs correction before use: it currently supplies raw FASTQ paths to HiCExplorer's `--samFiles` argument, which expects alignment files, and uses HindIII as an example restriction site while the paper methods report Sau3AI. Prepare the required alignments and match the restriction-site setting to the data before running it.
 
-Identification of B-linked sequences using male/female short-read data and Hi-C contact profiles. Validation was performed against previously published B-specific markers.
-
-    Scripts: scripts/03_B-Chromosome_Identification/
-
-4. 3D Genome Organization & TAD Analysis
-
-Modeling of 3D chromatin structure using Juicer and identification of TADs and loops via HiCExplorer. Structural variants (SVs) were identified using SyRI.
-
-    Scripts: scripts/04_3d_genome/
-
-5. Transcriptome Analysis
-
-RNA-seq alignment across Brain, Muscle, and Gonad tissues using STAR. Differential expression was assessed with edgeR (∣logFC∣≥1.5, FDR≤0.05).
-
-    Scripts: scripts/05_expression/
-
- Prerequisites
-
-Recreate the analysis environments using the provided Conda YAML files:
-Bash
-
-conda env create -f envs/genomics_env.yml
-conda activate genomics_env
-
-
-Data Availability
-
-The genomic data and chromosome-level assembly generated for this study are deposited at the **National Center for Biotechnology Information (NCBI)** under the following accessions:
-
-* **BioProject:** [`PRJNA1283115`](https://www.ncbi.nlm.nih.gov/bioproject/PRJNA1283115)
-* **Genome Assembly:** [`GCA_051989935.1`](https://www.ncbi.nlm.nih.gov/datasets/genome/GCA_051989935.1/)
-* **Sequence Read Archive (SRA):** Raw reads for PacBio HiFi, Illumina, and Hi-C can be accessed via the BioProject link above.
-
- Citation
-
-If you use these scripts or the assembly in your research, please cite:
-
-Jehangir, M., et al. (2026). Genome Assembly of Astatotilapia latifasciata Uncovers B Chromosome Linked Chromatin Reorganization. bioRxiv.
-DOI: 10.1101/2025.08.05.668687
-
-✉️ Contact
-
-Maryam Jehangir - Postdoctoral Researcher
-
-Email: maryam.bioinfo.unesp@gmail.com
+The scripts have not been validated as a clean-install, end-to-end reproduction from this repository alone. See the paper for the published methods and the data links above for inputs and supporting files.
