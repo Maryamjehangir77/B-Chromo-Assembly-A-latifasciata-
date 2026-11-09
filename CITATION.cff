@@ -1,0 +1,32 @@
+cff-version: 1.2.0
+message: "If you use this software or associated genome resources, please cite the published article."
+type: software
+title: "A. latifasciata B-chromosome assembly and analysis workflows"
+authors:
+  - family-names: Jehangir
+    given-names: Maryam
+repository-code: "https://github.com/Maryamjehangir77/B-Chromo-Assembly-A-latifasciata-"
+preferred-citation:
+  type: article
+  authors:
+    - family-names: Jehangir
+      given-names: Maryam
+    - family-names: Ahmad
+      given-names: Syed Farhan
+    - family-names: Oliveira
+      given-names: Jordana Inácio Nascimento
+    - family-names: Cardoso
+      given-names: Adauto Lima
+    - family-names: Wolf
+      given-names: Ivan Rodrigo
+    - family-names: Valente
+      given-names: Guilherme Targino
+    - family-names: Srikulnath
+      given-names: Kornsorn
+    - family-names: Martins
+      given-names: Cesar
+  title: "Genome assembly of Astatotilapia latifasciata uncovers B chromosome-linked chromatin reorganization"
+  journal: Heredity
+  year: 2026
+  doi: "10.1038/s41437-026-00847-4"
+  url: "https://doi.org/10.1038/s41437-026-00847-4"
